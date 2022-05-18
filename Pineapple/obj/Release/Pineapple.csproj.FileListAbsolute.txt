@@ -1,0 +1,14 @@
+X:\works\Pineapple\Pineapple\bin\Release\Pineapple.exe.config
+X:\works\Pineapple\Pineapple\bin\Release\Pineapple.exe
+X:\works\Pineapple\Pineapple\bin\Release\Pineapple.pdb
+X:\works\Pineapple\Pineapple\obj\Release\MainWindow.g.cs
+X:\works\Pineapple\Pineapple\obj\Release\App.g.cs
+X:\works\Pineapple\Pineapple\obj\Release\Pineapple_MarkupCompile.cache
+X:\works\Pineapple\Pineapple\obj\Release\Pineapple_MarkupCompile.lref
+X:\works\Pineapple\Pineapple\obj\Release\MainWindow.baml
+X:\works\Pineapple\Pineapple\obj\Release\Pineapple.g.resources
+X:\works\Pineapple\Pineapple\obj\Release\Pineapple.Properties.Resources.resources
+X:\works\Pineapple\Pineapple\obj\Release\Pineapple.csproj.GenerateResource.cache
+X:\works\Pineapple\Pineapple\obj\Release\Pineapple.csproj.CoreCompileInputs.cache
+X:\works\Pineapple\Pineapple\obj\Release\Pineapple.exe
+X:\works\Pineapple\Pineapple\obj\Release\Pineapple.pdb

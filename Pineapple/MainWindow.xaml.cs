@@ -25,33 +25,68 @@ namespace Pineapple
         public MainWindow()
         {
             InitializeComponent();
+            String[] args = App.mArgs;
+            if (args != null)
+            {
+
+                Progress(args);
+            }
         }
 
-        private string GetNewPath()
+        enum Lang
         {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            Ko,
+            Ja,
+            Unknown
+        }
 
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        private Lang DetectJAKOString(string str)
+        {
+            foreach (char chr in str)
             {
-                return dialog.SelectedPath;
+                if (chr >= '가' && chr < '힣')
+                {
+                    return Lang.Ko;
+                }
+
+                if ((chr >= 0x3040 && chr <= 0x30FF) || (chr >= 0x4E00 && chr<= 0x9FBF))
+                {
+                    return Lang.Ja;
+                }
             }
 
-            return null;
+            return Lang.Unknown;
         }
 
-        private void RenameFile(string originDirectory, string file, Encoding formatFrom, Encoding formatTo)
+        Encoding ja = Encoding.GetEncoding(949);
+        Encoding ko = Encoding.GetEncoding(932);
+        private void RenameFile(string originDirectory, string file)
         {
             var fileName = file.Split('\\');
 
-            string changedFileName = Convert(fileName[fileName.Length - 1], formatFrom, formatTo);
+            string changedFileName = "";
+
+            switch (DetectJAKOString(fileName[fileName.Length - 1]))
+            {
+                case Lang.Ja:
+                    changedFileName = Convert(fileName[fileName.Length - 1], ja, ko);
+                    break;
+                case Lang.Ko:
+                    changedFileName = Convert(fileName[fileName.Length - 1], ko, ja);
+                    break;
+                case Lang.Unknown:
+                    changedFileName = fileName[fileName.Length - 1];
+                    break;
+            }
 
             Console.WriteLine(originDirectory + "\\" + fileName[fileName.Length - 1] + " -> " + originDirectory + "\\" + changedFileName);
+            Progress_Text.Text = fileName[fileName.Length - 1] + " -> " + changedFileName;
 
 
             if (System.IO.File.Exists(originDirectory + "\\" + fileName[fileName.Length - 1]))
             {
                 System.IO.File.Move(originDirectory + "\\" + fileName[fileName.Length - 1], originDirectory + "\\" + changedFileName);
-                Console.WriteLine(fileName[fileName.Length - 1] + " -> " + changedFileName);
+                Progress_Text.Text = fileName[fileName.Length - 1] + " -> " + changedFileName;
             }
 
         }
@@ -75,66 +110,47 @@ namespace Pineapple
         private void ShowAd()
         {
             System.Diagnostics.Process.Start("https://pbs.twimg.com/media/FSLqrg7agAEEyT8?format=png&name=large");
+
+            Progress_Text.Text = "완료";
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void Progress(string[] folders)
         {
-            Encoding formatFrom = Encoding.GetEncoding(949);
-            Encoding formatTo = Encoding.GetEncoding(932);
-
-            string path = GetNewPath();
-
-            string[] files = Directory.GetFiles(path, "*.*");
-
-            foreach (var file in files)
+            foreach (string folder in folders)
             {
-                RenameFile(path, file, formatFrom, formatTo);
-            }
+                string path = folder;
 
-            DirectoryInfo di = new DirectoryInfo(path);
-            DirectoryInfo[] dirs = di.GetDirectories("*.*", SearchOption.AllDirectories);
+                string[] files = Directory.GetFiles(path, "*.*");
 
-            foreach (DirectoryInfo d in dirs)
-            {
-                string[] dirctoryFiles = Directory.GetFiles(d.FullName, "*.*");
-
-                foreach (var file in dirctoryFiles)
+                foreach (var file in files)
                 {
-                    RenameFile(d.FullName, file, formatFrom, formatTo);
+                    RenameFile(path, file);
+                    System.Windows.Forms.Application.DoEvents();
                 }
-            }
 
-            ShowAd();
+                DirectoryInfo di = new DirectoryInfo(path);
+                DirectoryInfo[] dirs = di.GetDirectories("*.*", SearchOption.AllDirectories);
+
+                foreach (DirectoryInfo d in dirs)
+                {
+                    string[] dirctoryFiles = Directory.GetFiles(d.FullName, "*.*");
+
+                    foreach (var file in dirctoryFiles)
+                    {
+                        RenameFile(d.FullName, file);
+                        System.Windows.Forms.Application.DoEvents();
+                    }
+                }
+
+                ShowAd();
+            }
         }
 
-        private void button2_Click(object sender, RoutedEventArgs e)
+        private void Grid_Drop(object sender, System.Windows.DragEventArgs e)
         {
-            Encoding formatFrom = Encoding.GetEncoding(932);
-            Encoding formatTo = Encoding.GetEncoding(949);
+            var folders = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
 
-            string path = GetNewPath();
-
-            string[] files = Directory.GetFiles(path, "*.*");
-
-            foreach (var file in files)
-            {
-                RenameFile(path, file, formatFrom, formatTo);
-            }
-
-            DirectoryInfo di = new DirectoryInfo(path);
-            DirectoryInfo[] dirs = di.GetDirectories("*.*", SearchOption.AllDirectories);
-
-            foreach (DirectoryInfo d in dirs)
-            {
-                string[] dirctoryFiles = Directory.GetFiles(d.FullName, "*.*");
-
-                foreach (var file in dirctoryFiles)
-                {
-                    RenameFile(d.FullName, file, formatFrom, formatTo);
-                }
-            }
-
-            ShowAd();
+            Progress(folders);
         }
     }
 }

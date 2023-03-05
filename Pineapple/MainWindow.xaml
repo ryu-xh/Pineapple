@@ -5,9 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pineapple"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="830">
+        Title="MainWindow" Height="450" Width="385">
     <Grid>
-        <Button x:Name="button1" Content="변환하기" Margin="10,10,420,10" Click="button1_Click"/>
-        <Button x:Name="button2" Content="기하환변" Margin="420,10,10,10" Click="button2_Click"/>
+        <Rectangle x:Name="Image" AllowDrop="True" Drop="Grid_Drop">
+            <Rectangle.Fill>
+                <ImageBrush Stretch="UniformToFill">
+                    <ImageBrush.ImageSource>/FSLqrg7agAEEyT8.png</ImageBrush.ImageSource>
+                </ImageBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <TextBlock x:Name="Progress_Text" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
     </Grid>
 </Window>
